@@ -4,3 +4,14 @@
 *.jar
 *.war
 *.ear
+
+# Build Files #
+build
+
+# Gradle Files #
+.gradle
+
+# Eclipse Files #
+.project
+.classpath
+.settings
