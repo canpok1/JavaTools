@@ -50,4 +50,4 @@ task zip(type: Zip) {
     destinationDir = file(".")
 }
 
-defaultTasks 'clean', 'build', 'zip'
+defaultTasks 'clean', 'build', 'zip', 'javadoc'

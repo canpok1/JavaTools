@@ -48,7 +48,7 @@ public class BomEraser {
     
     /**
      * 入力ファイルからBomを除去したファイルを、指定の出力先に出力します。
-     * @param file 入力ファイル
+     * @param input 入力ファイル
      * @param output 出力先
      * @return 処理結果
      * <ul>
