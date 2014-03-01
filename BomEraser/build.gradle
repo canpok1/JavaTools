@@ -14,20 +14,40 @@ dependencies {
     testCompile "junit:junit:4.11"
 }
 
+// Javaコンパイル時の文字コード設定
 compileJava {
     options.encoding = 'UTF-8'
 }
 
+// テスト実行時の文字コード設定
 compileTestJava {
     options.encoding = 'UTF-8'
 }
 
+// Javadoc作成時の文字コード設定
 javadoc {
     options.encoding = 'UTF-8'
 }
 
+// jarのマニフェスト設定
 jar {
     manifest {
         attributes "Main-Class" : "core.BomEraser"
     }
 }
+
+// 成果物をZip圧縮
+task zip(type: Zip) {
+    // binフォルダ => zipのルート
+    from 'bin'
+
+    // アプリケーションのJAR => zipのlibフォルダ
+    into('lib') {
+        from "build/libs/BomEraser.jar"
+    }
+
+    // Zipの出力先
+    destinationDir = file(".")
+}
+
+defaultTasks 'clean', 'build', 'zip'
