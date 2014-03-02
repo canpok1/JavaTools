@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 
+import mockit.Expectations;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,81 @@ public class BomEraserTest {
     public static File getNotExistingFile() {
         String path = "build/resources/test/NonExisting.txt";
         return new File(path);
+    }
+    
+    /**
+     * BomEraserのmainメソッド用テストクラス
+     * @author tanabe
+     *
+     */
+    public static class MainTest {
+        @Test
+        public void 引数が0個の時はdispHelpが呼ばれる()
+        {
+            new Expectations(BomEraser.class) {{
+                BomEraser.dispHelp();
+            }};
+            
+            String[] args = {};
+            BomEraser.main(args);
+        }
+        
+        @Test
+        public void 引数が1個の時はdispHelpが呼ばれる()
+        {
+            new Expectations(BomEraser.class) {{
+                BomEraser.dispHelp();
+            }};
+            
+            String[] args = {"abc"};
+            BomEraser.main(args);
+        }
+        
+        @Test
+        public void 引数2個だとeraseが呼ばれ戻り値trueだと例外が発生しない() throws IOException
+        {
+            new Expectations(BomEraser.class) {{
+                new BomEraser().erase((File)any, (File)any); result = true;
+            }};
+            
+            String[] args = {"abc", "def"};
+            BomEraser.main(args);
+        }
+        
+        @Test
+        public void 引数2個だとeraseが呼ばれ戻り値falseだと例外が発生しない() throws IOException
+        {
+            new Expectations(BomEraser.class) {{
+                new BomEraser().erase((File)any, (File)any); result = false;
+            }};
+            
+            String[] args = {"abc", "def"};
+            BomEraser.main(args);
+        }
+        
+        @Test
+        public void eraseが例外を返すときは例外が発生しない() throws IOException
+        {
+            new Expectations(BomEraser.class) {{
+                new BomEraser().erase((File)any, (File)any);
+                result = new IllegalArgumentException();
+            }};
+            
+            String[] args = {"abc", "def"};
+            BomEraser.main(args);
+        }
+    }
+    
+    /**
+     * BomEraserのdispHelpメソッド用テストクラス
+     * @author tanabe
+     *
+     */
+    public static class DispHelpTest {
+        @Test
+        public void 例外が発生しない() {
+            BomEraser.dispHelp();
+        }
     }
     
     /**
@@ -148,9 +225,7 @@ public class BomEraserTest {
      *
      */
     public static class isBomFileTest {
-        /**
-         * テスト対象
-         */
+        /** テスト対象 */
         private BomEraser target;
 
         @Before
@@ -164,17 +239,27 @@ public class BomEraserTest {
         }
         
         @Test
-        public void BOM付ファイルを渡すと戻り値true() throws IOException {
+        public void isBomメソッドがtrueを返す時戻り値true() throws IOException {
+            new Expectations(BomEraser.class) {{
+                new BomEraser().isBom((byte[])any); result = true;
+            }};
+            BomEraser mock = new BomEraser();
+            
             assertTrue(
-                    this.target.isBomFile(
+                    mock.isBomFile(
                             BomEraserTest.getExistingFileWithBom()));
         }
         
         @Test
-        public void BOMなしファイルを渡すと戻り値false() throws IOException {
+        public void isBomメソッドがfalseを返す時戻り値false() throws IOException {
+            new Expectations(BomEraser.class) {{
+                new BomEraser().isBom((byte[])any); result = false;
+            }};
+            BomEraser mock = new BomEraser();
+            
             assertFalse(
-                    this.target.isBomFile(
-                            BomEraserTest.getExistingFileWithoutBom()));
+                    mock.isBomFile(
+                            BomEraserTest.getExistingFileWithBom()));
         }
         
         @Test(expected = IOException.class)
