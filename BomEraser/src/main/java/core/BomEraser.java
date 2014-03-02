@@ -29,7 +29,16 @@ public class BomEraser {
                 dispHelp();
             }
         
-            BomEraser eraser = new BomEraser();
+            File input = new File(args[0]);
+            File output = new File(args[1]);
+            if(new BomEraser().erase(input, output)) {
+                System.out.println("出力成功" + "[" + input.getPath() + "]"
+                                    + ">>[" + output.getPath() + "]");
+            }
+            else {
+                System.out.println("出力失敗" + "[" + input.getPath() + "]"
+                                    + ">>[" + output.getPath() + "]");
+            }
         }
         catch(Exception e) {
             System.out.println("例外発生");
@@ -73,28 +82,69 @@ public class BomEraser {
             return false;
         }
         
-        try (
-            BufferedInputStream inputStream = this.createSkipBOMStream(input);
-            FileOutputStream outputStream = new FileOutputStream(output);
-        ) {
-            int data;
-            while((data = inputStream.read()) > 0) {
-                outputStream.write(data);
+        BufferedInputStream inputStream = null;
+        try {
+            FileOutputStream outputStream = null;
+            inputStream = this.createSkipBOMStream(input);
+            try {
+                outputStream = new FileOutputStream(output);
+                int data;
+                while((data = inputStream.read()) > 0) {
+                    outputStream.write(data);
+                }
+                return true;
             }
-            return true;
+            finally {
+                if(outputStream != null) {
+                    outputStream.close();
+                }
+            }
         }
-        catch (FileNotFoundException e) {
-            throw new IOException(e);
+        finally {
+            if(inputStream != null) {
+                inputStream.close();
+            }
         }
     }
     
     /**
      * BOMを読み飛ばすStreamを作成します。
      * @param file 読み取り対象のファイル
-     * @return BOMを読み飛ばすStream
+     * @return BOMを読み飛ばすStream。ファイルが存在しない場合はnull。
      * @throws IOException Streamの生成に失敗した場合
      */
     public BufferedInputStream createSkipBOMStream( File file ) throws IOException {
+        if(file == null) {
+            throw new IllegalArgumentException("引数がnull");
+        }
+        if(!file.exists()) {
+            return null;
+        }
+        
+        if(isBomFile(file)) {
+            BufferedInputStream stream = new BufferedInputStream(
+                                            new FileInputStream(file));
+            // 読み込み位置をBOMの直後に修正
+            stream.mark(3);
+            return stream;
+        } else {
+            return new BufferedInputStream(
+                    new FileInputStream(file));
+        }
+    }
+
+    /**
+     * 指定ファイルがBOMから始まるか判定します。
+     * @param file 指定ファイル
+     * @return 判定結果
+     * <ul>
+     *   <li>true:指定ファイルがBOMから始まる</li>
+     *   <li>false:指定ファイルがBOMから始まらない</li>
+     * </ul>
+     * @throws IOException ファイル読み込みに失敗した場合
+     */
+    public boolean isBomFile(File file) throws IOException {
+        
         if(file == null) {
             throw new IllegalArgumentException("引数がnull");
         }
@@ -103,23 +153,20 @@ public class BomEraser {
         try {
             stream = new BufferedInputStream(
                         new FileInputStream(file));
-            
-            if(stream.available() >= 3) {
-                byte[] buffer = {0,0,0};
-                stream.read(buffer, 0, 3);
-                if(this.isBom(buffer)) {
-                    // 読み込み位置をBOMの直後に修正
-                    stream.mark(3);
-                }
+            if(stream.available() < 3) {
+                return false;
             }
-            
-            return stream;
+            byte[] buffer = {0,0,0};
+            stream.read(buffer, 0, 3);
+            return this.isBom(buffer);
         }
         catch(FileNotFoundException e) {
+            throw new IOException(e);
+        }
+        finally {
             if(stream != null) {
                 stream.close();
             }
-            throw new IOException(e);
         }
     }
     
