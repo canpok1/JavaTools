@@ -27,6 +27,7 @@ public class BomEraser {
         try {
             if(args.length < 2) {
                 dispHelp();
+                return;
             }
         
             File input = new File(args[0]);
