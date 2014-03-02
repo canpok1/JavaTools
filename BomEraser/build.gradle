@@ -1,32 +1,22 @@
 apply plugin: "java"
 apply plugin: "eclipse"
 
-// Gradleラッパーのインストールタスク
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile "junit:junit:4.11"
+    testCompile 'com.googlecode.jmockit:jmockit:1.5'
+    testCompile 'com.googlecode.jmockit:jmockit-coverage:0.999.24'
+    testCompile 'junit:junit:4.11'
 }
 
-// Javaコンパイル時の文字コード設定
-compileJava {
-    options.encoding = 'UTF-8'
-}
-
-// テスト実行時の文字コード設定
-compileTestJava {
-    options.encoding = 'UTF-8'
-}
-
-// Javadoc作成時の文字コード設定
-javadoc {
-    options.encoding = 'UTF-8'
+// 文字コード設定
+def defaultEncoding = 'UTF-8'
+[compileJava, compileTestJava, javadoc]*.options*.encoding = defaultEncoding
+// Gradleラッパーのインストールタスク
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
 }
 
 // jarのマニフェスト設定
@@ -38,8 +28,8 @@ jar {
 
 // 成果物をZip圧縮
 task zip(type: Zip) {
-    // binフォルダ => zipのルート
-    from 'bin'
+    // batフォルダ => zipのルート
+    from 'bat'
 
     // アプリケーションのJAR => zipのlibフォルダ
     into('lib') {
@@ -48,6 +38,11 @@ task zip(type: Zip) {
 
     // Zipの出力先
     destinationDir = file(".")
+}
+
+test {
+    // テストが二重実行される問題の対策
+    exclude '**/*$*'
 }
 
 defaultTasks 'clean', 'build', 'zip', 'javadoc'
