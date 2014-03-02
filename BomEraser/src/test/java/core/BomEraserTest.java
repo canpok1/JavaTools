@@ -126,6 +126,20 @@ public class BomEraserTest {
         public void 引数がNullだと例外発生() throws IOException {
             this.target.createSkipBOMStream(null);
         }
+
+        @Test
+        public void 存在しないファイルを渡すと戻り値null() throws IOException {
+            assertNull(
+                    this.target.createSkipBOMStream(
+                            BomEraserTest.getNotExistingFile()));
+        }
+        
+        @Test
+        public void BOMなしファイルを渡すと戻り値非null() throws IOException {
+            assertNotNull(
+                    this.target.createSkipBOMStream(
+                            BomEraserTest.getExistingFileWithoutBom()));
+        }
     }
 
     /**
