@@ -1,23 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'findbugs'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testCompile 'com.googlecode.jmockit:jmockit:1.5'
     testCompile 'com.googlecode.jmockit:jmockit-coverage:0.999.24'
     testCompile 'junit:junit:4.11'
-}
-
-// 文字コード設定
-def defaultEncoding = 'UTF-8'
-[compileJava, compileTestJava, javadoc]*.options*.encoding = defaultEncoding
-// Gradleラッパーのインストールタスク
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
 }
 
 // jarのマニフェスト設定
@@ -27,8 +11,17 @@ jar {
     }
 }
 
+clean << {
+    def coverageDir = file("${projectDir}/coverage-report")
+    println "delete ${coverageDir}"
+    delete(coverageDir)
+
+    println "delete ${zip.archivePath}"
+    delete(zip.archivePath)
+}
+
 // 成果物をZip圧縮
-task zip(type: Zip) {
+task zip(dependsOn: build, type: Zip) {
     // batフォルダ => zipのルート
     from 'bat'
 
@@ -40,29 +33,3 @@ task zip(type: Zip) {
     // Zipの出力先
     destinationDir = file(".")
 }
-
-test {
-    // テストが二重実行される問題の対策
-    exclude '**/*$*'
-}
-
-findbugsMain {
-    effort = "max"
-    reportLevel = "high"
-    ignoreFailures = true
-    reports {
-        xml.enabled = true
-        html.enabled = false
-    }
-}
-findbugsTest {
-    effort = "max"
-    reportLevel = "high"
-    ignoreFailures = true
-    reports {
-        xml.enabled = true
-        html.enabled = false
-    }
-}
-
-defaultTasks 'clean', 'build', 'zip', 'javadoc'

@@ -1,0 +1,45 @@
+// Gradleラッパーのインストールタスク
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+
+defaultTasks 'clean', 'build', 'javadoc'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'findbugs'
+
+    repositories {
+        mavenCentral()
+    }
+
+    // 文字コード設定
+    def defaultEncoding = 'UTF-8'
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = defaultEncoding
+
+    test {
+        // テストが二重実行される問題の対策
+        exclude '**/*$*'
+    }
+
+    findbugsMain {
+        effort = "max"
+        reportLevel = "high"
+        ignoreFailures = true
+        reports {
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+
+    findbugsTest {
+        effort = "max"
+        reportLevel = "high"
+        ignoreFailures = true
+        reports {
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+}
