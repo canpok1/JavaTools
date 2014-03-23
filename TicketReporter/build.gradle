@@ -1,0 +1,10 @@
+dependencies {
+    compile "commons-httpclient:commons-httpclient:3.1"
+}
+
+task redmineReport(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "jp.gr.java_conf.ktnet.redmine.TicketReporter"
+}
+
+defaultTasks "clean", "build"
