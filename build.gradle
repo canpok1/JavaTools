@@ -3,7 +3,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
 
-defaultTasks 'clean', 'build', 'javadoc'
+defaultTasks 'cleanAll', 'build', 'javadoc'
 
 subprojects {
     apply plugin: 'java'
@@ -42,4 +42,6 @@ subprojects {
             html.enabled = false
         }
     }
+
+    task cleanAll(dependsOn: clean) << {}
 }

@@ -11,13 +11,15 @@ jar {
     }
 }
 
-clean << {
-    def coverageDir = file("${projectDir}/coverage-report")
-    println "delete ${coverageDir}"
-    delete(coverageDir)
-
-    println "delete ${zip.archivePath}"
-    delete(zip.archivePath)
+// ¬‰Ê•¨‚ðíœ
+cleanAll << {
+    def deleteTarget = files("${projectDir}/coverage-report",
+                             zip.archivePath)
+    delete(deleteTarget)
+    
+    for(def target : deleteTarget) {
+        println "delete [${target}]"
+    }
 }
 
 // ¬‰Ê•¨‚ðZipˆ³k
@@ -33,3 +35,5 @@ task zip(dependsOn: build, type: Zip) {
     // Zip‚Ìo—Íæ
     destinationDir = file(".")
 }
+
+defaultTasks 'cleanAll', 'build', 'zip', 'javadoc'
