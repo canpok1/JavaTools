@@ -7,4 +7,4 @@ task redmineReport(type: JavaExec) {
     main = "jp.gr.java_conf.ktnet.redmine.TicketReporter"
 }
 
-defaultTasks "clean", "build"
+defaultTasks "clean", "build", "javadoc"
