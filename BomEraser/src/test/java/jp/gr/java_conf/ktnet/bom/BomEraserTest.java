@@ -1,4 +1,4 @@
-package core;
+package jp.gr.java_conf.ktnet.bom;
 
 import static org.junit.Assert.*;
 

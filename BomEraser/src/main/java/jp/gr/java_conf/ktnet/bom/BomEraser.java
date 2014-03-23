@@ -1,4 +1,4 @@
-package core;
+package jp.gr.java_conf.ktnet.bom;
 
 import java.io.BufferedInputStream;
 import java.io.File;
