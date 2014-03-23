@@ -37,8 +37,8 @@ public class RedmineClient {
 
     /**
      * HTTPのGetリクエストを送信します。
-     * @param url RedmineへのURL
      * @param filter 絞り込む条件
+     * @return 取得したチケット情報
      * @throws 接続に失敗した場合
      */
     public TicketContainer getRequest(TicketFilter filter)
@@ -69,8 +69,8 @@ public class RedmineClient {
      * HTTPリクエストを送信します。
      * このメソッド呼び出し後、getMethodのreleseConnectionを呼び出してください。
      * 取得できない場合はnullを返します。
-     * @param getMethod
-     * @return
+     * @param getMethod Get用のメソッド
+     * @return 取得情報読み込み用InputStream
      * @throws HttpException
      * @throws IOException
      */

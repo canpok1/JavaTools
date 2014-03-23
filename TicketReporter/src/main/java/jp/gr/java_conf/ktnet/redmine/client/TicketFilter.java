@@ -12,7 +12,7 @@ public class TicketFilter {
      * @author tanabe
      *
      */
-    public enum Status {
+    public static enum Status {
         OPEN,   // 未完了
         CLOSED, // 完了
         ALL     // すべて
