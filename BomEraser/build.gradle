@@ -23,7 +23,7 @@ task wrapper(type: Wrapper) {
 // jarのマニフェスト設定
 jar {
     manifest {
-        attributes "Main-Class" : "core.BomEraser"
+        attributes "Main-Class" : "jp.gr.java_conf.ktnet.bom.BomEraser"
     }
 }
 
